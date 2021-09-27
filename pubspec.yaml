@@ -1,0 +1,27 @@
+name: pro_account
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  path_provider: ^2.0.4
+  uuid: ^3.0.4
+  uni_ocr_client:
+    git:
+      path: packages/uni_ocr_client
+      ref: master
+      url: https://github.com/biyidev/uni_ocr.git
+  uni_translate_client:
+    git:
+      path: packages/uni_translate_client
+      ref: master
+      url: https://github.com/biyidev/uni_translate.git
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
