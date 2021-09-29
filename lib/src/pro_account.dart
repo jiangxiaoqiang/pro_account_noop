@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -27,15 +28,17 @@ class ProAccount {
   Session? lastSession;
 
   Future<void> ensureInitialized() async {
-    final docDir = await getApplicationDocumentsDirectory();
-    dataDirectory = Directory('${docDir.parent.path}/biyiapp-dev');
-    if (!dataDirectory.existsSync()) {
-      dataDirectory.createSync(recursive: true);
-    }
-    File sessionFile = File('${dataDirectory.path}/session.json');
-    if (sessionFile.existsSync()) {
-      final String jsonString = await sessionFile.readAsString();
-      lastSession = Session.fromJson(json.decode(jsonString));
+    if (!kIsWeb) {
+      final docDir = await getApplicationDocumentsDirectory();
+      dataDirectory = Directory('${docDir.parent.path}/biyiapp-dev');
+      if (!dataDirectory.existsSync()) {
+        dataDirectory.createSync(recursive: true);
+      }
+      File sessionFile = File('${dataDirectory.path}/session.json');
+      if (sessionFile.existsSync()) {
+        final String jsonString = await sessionFile.readAsString();
+        lastSession = Session.fromJson(json.decode(jsonString));
+      }
     }
   }
 
@@ -49,26 +52,32 @@ class ProAccount {
     String password, {
     Guest? targetGuest,
   }) async {
-    File sessionFile = File('${dataDirectory.path}/session.json');
     Session session = Session(id: 0, targetType: kLoginAsGuest);
     session.targetGuestId = targetGuest?.id;
     session.targetGuest = targetGuest;
     final String jsonString = json.encode(session.toJson());
-    await sessionFile.writeAsString(jsonString);
+
+    if (!kIsWeb) {
+      File sessionFile = File('${dataDirectory.path}/session.json');
+      await sessionFile.writeAsString(jsonString);
+    }
     return session;
   }
 
   Future<Session> loginAsGuest() async {
-    File guestFile = File('${dataDirectory.path}/guest.json');
-
     Guest guest;
-    if (!guestFile.existsSync()) {
-      guest = Guest(id: 0, guestKey: Uuid().v4(), guestToken: "");
-      final String jsonString = json.encode(guest.toJson());
-      await guestFile.writeAsString(jsonString);
+    if (!kIsWeb) {
+      File guestFile = File('${dataDirectory.path}/guest.json');
+      if (!guestFile.existsSync()) {
+        guest = Guest(id: 0, guestKey: Uuid().v4(), guestToken: "");
+        final String jsonString = json.encode(guest.toJson());
+        await guestFile.writeAsString(jsonString);
+      } else {
+        final String jsonString = await guestFile.readAsString();
+        guest = Guest.fromJson(json.decode(jsonString));
+      }
     } else {
-      final String jsonString = await guestFile.readAsString();
-      guest = Guest.fromJson(json.decode(jsonString));
+      guest = Guest(id: 0, guestKey: Uuid().v4(), guestToken: "");
     }
 
     return _login(kLoginAsGuest, guest.guestKey, guest.guestToken);
