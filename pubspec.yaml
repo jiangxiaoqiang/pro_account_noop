@@ -15,12 +15,12 @@ dependencies:
     git:
       path: packages/uni_ocr_client
       ref: master
-      url: https://github.com/biyidev/uni_ocr.git
+      url: https://github.com/jiangxiaoqiang/uni_ocr.git
   uni_translate_client:
     git:
       path: packages/uni_translate_client
       ref: master
-      url: https://github.com/biyidev/uni_translate.git
+      url: https://github.com/jiangxiaoqiang/uni_translate.git
 
 dev_dependencies:
   flutter_test:
