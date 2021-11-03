@@ -24,17 +24,17 @@ class ProAccount {
   late OcrEnginesApi _ocrEnginesApi;
   late VersionsApi _versionsApi;
 
-  late Directory dataDirectory;
+  Directory? dataDirectory;
   Session? lastSession;
 
   Future<void> ensureInitialized() async {
     if (!kIsWeb) {
       final docDir = await getApplicationDocumentsDirectory();
       dataDirectory = Directory('${docDir.parent.path}/biyiapp-dev');
-      if (!dataDirectory.existsSync()) {
-        dataDirectory.createSync(recursive: true);
+      if (!dataDirectory!.existsSync()) {
+        dataDirectory!.createSync(recursive: true);
       }
-      File sessionFile = File('${dataDirectory.path}/session.json');
+      File sessionFile = File('${dataDirectory!.path}/session.json');
       if (sessionFile.existsSync()) {
         final String jsonString = await sessionFile.readAsString();
         lastSession = Session.fromJson(json.decode(jsonString));
@@ -58,7 +58,7 @@ class ProAccount {
     final String jsonString = json.encode(session.toJson());
 
     if (!kIsWeb) {
-      File sessionFile = File('${dataDirectory.path}/session.json');
+      File sessionFile = File('${dataDirectory!.path}/session.json');
       await sessionFile.writeAsString(jsonString);
     }
     return session;
@@ -67,7 +67,7 @@ class ProAccount {
   Future<Session> loginAsGuest() async {
     Guest guest;
     if (!kIsWeb) {
-      File guestFile = File('${dataDirectory.path}/guest.json');
+      File guestFile = File('${dataDirectory!.path}/guest.json');
       if (!guestFile.existsSync()) {
         guest = Guest(id: 0, guestKey: Uuid().v4(), guestToken: "");
         final String jsonString = json.encode(guest.toJson());
