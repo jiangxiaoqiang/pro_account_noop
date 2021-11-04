@@ -30,7 +30,7 @@ class ProAccount {
   Future<void> ensureInitialized() async {
     if (!kIsWeb) {
       final docDir = await getApplicationDocumentsDirectory();
-      dataDirectory = Directory('${docDir.parent.path}/biyiapp-dev');
+      dataDirectory = Directory('${docDir.path}/biyiapp-dev');
       if (!dataDirectory!.existsSync()) {
         dataDirectory!.createSync(recursive: true);
       }
