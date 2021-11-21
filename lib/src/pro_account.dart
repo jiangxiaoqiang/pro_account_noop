@@ -37,7 +37,9 @@ class ProAccount {
       File sessionFile = File('${dataDirectory!.path}/session.json');
       if (sessionFile.existsSync()) {
         final String jsonString = await sessionFile.readAsString();
-        lastSession = Session.fromJson(json.decode(jsonString));
+        if(jsonString.isNotEmpty) {
+          lastSession = Session.fromJson(json.decode(jsonString));
+        }
       }
     }
   }
